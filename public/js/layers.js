@@ -1,4 +1,4 @@
-
+import Entity from './Entity.js'
 
 
 export default class Container { // contains all the layers to display
@@ -36,8 +36,8 @@ export function createBackgroundLayer(backgrounds, sprites){ // High order funct
 	}
 }
 
-export function createSpriteLayer(sprite, pos){ // High order function. Returns function that draws sprite layer
+export function createSpriteLayer(entity){ // High order function. Returns function that draws sprite layer
 	return function drawSpriteLayer(context) {
-		sprite.draw('idle', context, pos.x, pos.y);
+		entity.draw(context);
 	}
 }

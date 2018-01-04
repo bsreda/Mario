@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  	"start": "serve ./public",
+    "start": "serve ./public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "serve": "^6.4.1"
+    "serve": "^6.4.3"
   }
 }
