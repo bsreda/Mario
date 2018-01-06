@@ -24,7 +24,7 @@ export default class Entity {
 		this.name = '';
 		this.pos = new Point(0,0);
 		this.vel = new Point(0,0);
-		
+		this.size = new Point(0,0);
 		this.traits = [];
 	}
 

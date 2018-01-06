@@ -12,23 +12,17 @@ export default class Container { // contains all the layers to display
 	}
 }
 
-function drawBackground(background, context, sprites){ // draws background using sprites in given ranges within context
-	background.ranges.forEach(([x1, x2, y1, y2]) =>{
-		for(let x = x1; x < x2; ++x){
-			for(let y = y1; y < y2; ++y){
-				sprites.drawTile(background.tile,context,x,y);
-			}
-		}
-	});
-}
 
-export function createBackgroundLayer(backgrounds, sprites){ // High order function. Returns function that draws background layer
+
+export function createBackgroundLayer(level, sprites){ // High order function. Returns function that draws background layer
 	const buffer = document.createElement('canvas');
 	buffer.width = 25*16;
 	buffer.height = 14*16;
 
-	backgrounds.forEach(background => {
-		drawBackground(background,buffer.getContext('2d'),sprites);
+	const context = buffer.getContext('2d');
+
+	level.tiles.forEach((tile, x, y) => {
+		sprites.drawTile(tile.name,context,x,y);
 	});
 
 	return function drawBackgroundLayer(context) {
@@ -36,8 +30,45 @@ export function createBackgroundLayer(backgrounds, sprites){ // High order funct
 	}
 }
 
-export function createSpriteLayer(entity){ // High order function. Returns function that draws sprite layer
+export function createSpriteLayer(entities){ // High order function. Returns function that draws sprite layer
 	return function drawSpriteLayer(context) {
-		entity.draw(context);
+		entities.forEach(entity => {
+			entity.draw(context);
+		})	
+	}
+}
+
+export function createCollisionLayer(level) {
+	const resolvedTiles = [];
+
+	const resolver = level.collider.tiles;
+	const tileSize = resolver.tileSize;
+
+	const getByIndexOriginal = resolver.getByIndex;
+	resolver.getByIndex = function getByIndexFake(x, y) {
+		resolvedTiles.push({x, y});
+		return getByIndexOriginal.call(resolver, x, y);
+	}
+
+	return function drawCollision(context) {
+		context.strokeStyle = 'blue';
+		resolvedTiles.forEach(({x, y}) =>{
+			context.beginPath();
+			context.rect(
+				x*tileSize, y*tileSize,
+			 	tileSize, tileSize);
+			context.stroke();
+		});
+
+		context.strokeStyle = 'red';
+		level.entities.forEach(entity => {
+			context.beginPath();
+			context.rect(
+				entity.pos.x, entity.pos.y,
+			 	entity.size.x, entity.size.y);
+			context.stroke();
+		})
+
+		resolvedTiles.length=0;
 	}
 }
