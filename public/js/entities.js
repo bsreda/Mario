@@ -1,12 +1,11 @@
 import Entity from './Entity.js';
-import Velocity from './traits/Velocity.js';
 import Move from './traits/Move.js';
 import Jump from './traits/Jump.js';
-import {loadMarioSprites} from './sprites.js';
+import {loadSpriteSheet} from './loaders.js';
 
 
 export function initMario(){
-	return loadMarioSprites()
+	return loadSpriteSheet('mario')
 	.then(sprite => {
 		const mario = new Entity();
 		mario.size.set(14, 16);
@@ -14,7 +13,6 @@ export function initMario(){
 		mario.name = 'idle';
 		mario.addTrait(new Move());
 		mario.addTrait(new Jump());
-		//mario.addTrait(new Velocity());
 		
 		return mario;
 	});

@@ -1,14 +1,5 @@
 
-class Point {
-	constructor(x, y){
-		this.set(x,y);
-	}
-	set(x,y){
-		this.x = x;
-		this.y = y;
-	}
-
-}
+import Point from './utils.js'
 
 export class Trait {
 	constructor(name) {
@@ -40,6 +31,6 @@ export default class Entity {
 	}
 
 	draw(context){
-		this.sprite.draw(this.name, context, this.pos.x, this.pos.y); // this.sprite defined after creating instance
+		this.sprite.draw(this.name, context, 0, 0); // this.sprite defined after creating instance
 	}
 }
