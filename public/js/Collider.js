@@ -1,61 +1,4 @@
-class Resolver {
-	constructor(grid, tileSize = 16) {
-		this.grid = grid;
-		this.tileSize = tileSize;
-	}
-
-	toIndex(pos) {
-		return Math.floor(pos / this.tileSize);
-	}
-
-	toIndexRange(pos1, pos2) {
-		const pMax = Math.ceil(pos2 / this.tileSize) * this.tileSize;
-		const range = [];
-		let pos = pos1;
-		do {
-			range.push(this.toIndex(pos));
-			pos += this.tileSize;
-		} while (pos < pMax);
-		return range;
-	}
-
-	getByIndex(indexX, indexY) {
-		const tile = this.grid.get(indexX, indexY);
-		if (tile) {
-			const x1 = indexX * this.tileSize;
-			const x2 = x1 + this.tileSize;
-			const y1 = indexY * this.tileSize;
-			const y2 = y1 + this.tileSize;
-			return {
-				tile,
-				x1,
-				x2,
-				y1,
-				y2,
-			};
-		}
-	}
-
-	searchByPosition(posX, posY) {
-		return this.getByIndex(
-			this.toIndex(posX),
-			this.toIndex(posY));
-	}
-
-	searchByRange(x1, x2, y1, y2) {
-		const matches = [];
-		this.toIndexRange(x1, x2).forEach(indexX => {
-			this.toIndexRange(y1, y2).forEach(indexY =>{
-				const match = this.getByIndex(indexX, indexY);
-				if(match){
-					matches.push(match);
-				}
-			});
-		});
-		return matches;
-	}
-
-}
+import Resolver from './Resolver.js';
 
 
 export default class Collider {
@@ -65,10 +8,10 @@ export default class Collider {
 	checkX(entity) {
 		let x;
 		if(entity.vel.x > 0) {
-			x = entity.pos.x + entity.size.x;
+			x = entity.bounds.right;
 		} 
 		else if (entity.vel.x < 0) {
-			x = entity.pos.x;
+			x = entity.bounds.left;
 		}
 		else {
 			return;
@@ -76,22 +19,26 @@ export default class Collider {
 
 		const matches = this.tiles.searchByRange(
 			x, x,
-			entity.pos.y, entity.pos.y + entity.size.y);
+			entity.bounds.top, entity.bounds.bottom); // old : offset = 0
 		matches.forEach(match => {
 			if(match.tile.type !== 'ground') {
 				return;
 			}
 
 			if(entity.vel.x > 0) {
-				if(entity.pos.x + entity.size.x > match.x1) {
-					entity.pos.x = match.x1 - entity.size.x;
+				if(entity.bounds.right > match.x1) {
+					entity.bounds.right = match.x1 ;
 					entity.vel.x = 0;
+
+					entity.touches('right');
 				}
 			}
 			else if(entity.vel.x < 0) {
-				if(entity.pos.x < match.x2) {
-					entity.pos.x = match.x2;
+				if(entity.bounds.left < match.x2) {
+					entity.bounds.left = match.x2;
 					entity.vel.x = 0;
+
+					entity.touches('left');
 				}
 			}
 		});
@@ -101,16 +48,16 @@ export default class Collider {
 	checkY(entity) {
 		let y;
 		if(entity.vel.y > 0) {
-			y = entity.pos.y + entity.size.y;
+			y = entity.bounds.bottom;
 		} 
 		else if (entity.vel.y < 0) {
-			y = entity.pos.y;
+			y = entity.bounds.top; // old : offset = 0
 		}
 		else {
 			return;
 		}
 		const matches = this.tiles.searchByRange(
-			entity.pos.x, entity.pos.x+ entity.size.x,
+			entity.bounds.left, entity.bounds.right,
 			y, y);
 		matches.forEach(match => {
 			if(match.tile.type !== 'ground') {
@@ -118,16 +65,21 @@ export default class Collider {
 			}
 
 			if(entity.vel.y > 0) {
-				if(entity.pos.y + entity.size.y > match.y1) {
-					entity.pos.y = match.y1 - entity.size.y;
+				if(entity.bounds.bottom > match.y1) {
+					entity.bounds.bottom = match.y1 ;
 					entity.vel.y = 0;
+
+					entity.touches('bottom');
 				}
 			}
 			else if(entity.vel.y < 0) {
-				if(entity.pos.y < match.y2) {
-					entity.pos.y = match.y2;
+				if(entity.bounds.top < match.y2) {
+					entity.bounds.top = match.y2;
 					entity.vel.y = 0;
+
+					entity.touches('top');
 				}
+
 			}
 		});
 

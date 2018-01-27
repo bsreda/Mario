@@ -1,11 +1,11 @@
-import {loadLevel} from './loaders.js';
+import {loadLevel, loadFont} from './loaders.js';
 import Entity from './Entity.js';
-import {initMario} from './entities.js';
+import {loadMario, loadGoomba, loadKoopa} from './entities.js';
 import Timer from './Timer.js';
 import View from './View.js'
 import Keyboard, {setupKeyboard} from './controls.js';
 
-import {createCollisionLayer} from './layers.js';
+import {createCollisionLayer, createViewLayer, createDashboardLayer} from './layers.js';
 
 
 
@@ -14,18 +14,38 @@ const context = canvas.getContext('2d');
 
 
 Promise.all([  //Parallel loads
-	initMario(),
+	loadMario(),
+	loadGoomba(),
+	loadKoopa(),
+	loadFont(),
 	loadLevel('1-1'), 
 ])
-.then(([mario, level]) => {
+.then(([createMario, createGoomba, createKoopa, font, level]) => {
 	
 	const view = new View();
 
+	const mario = createMario();
 	mario.pos.set(64,64);
-
-	level.cont.layers.push(createCollisionLayer(level));
-
 	level.entities.add(mario);
+
+	level.goombas.forEach((pos) => {
+		const goomba = createGoomba();
+		goomba.pos.set(pos[0], pos[1]);
+		level.entities.add(goomba);
+	});
+
+	level.koopas.forEach((pos) => {
+		const koopa = createKoopa();
+		koopa.pos.set(pos[0], pos[1]);
+		level.entities.add(koopa);
+	});
+
+
+
+	level.cont.layers.push(
+		createCollisionLayer(level),
+		createViewLayer(view),
+		createDashboardLayer(font, mario));
 
 	
 	const input = setupKeyboard(mario);
@@ -57,10 +77,10 @@ Promise.all([  //Parallel loads
 	timer.update = function update(dt){
 		level.update(dt);
 
-		if (mario.pos.x > 100) {
-			view.pos.x = mario.pos.x - 100
-		}
+		view.pos.x = Math.max(0, mario.pos.x - 100);
+		
 		level.cont.draw(context, view);
+
 	}
 	timer.start();
 
