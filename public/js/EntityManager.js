@@ -9,7 +9,6 @@ export default class EntityManager{
 		this.collision = collision;
 		this.env = background;
 		this.scroll;
-		this.mario;
 		this.border = new Point(0, 0);
 		this.gameover = false;
 	}
@@ -132,7 +131,7 @@ this.onCollisionWithEntity(player, entity, this.collision.getCollisionType(playe
 			return;
 		}
 		if (type == 0){
-			entity1.vel.y = -5;
+			entity1.vel.y = -3;
 			entity2.alive = 0;
 		}else{
 			entity1.alive = 0;
