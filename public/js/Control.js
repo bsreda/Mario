@@ -16,8 +16,7 @@ export default class Control{
 			this.entity.vel.x = +3;
 		}
 		if (nomTouche== this.up && this.entity.vel.y == 0){
-
-			this.entity.vel.y = -8;
+			this.entity.vel.y = -7;
 		}
 		//alert('Évènement keypress\n\n' + 'touche : ' + nomTouche);
 		});

@@ -1,8 +1,9 @@
 import Point from './utils.js'
 import Collision from './collision.js'
 export default class Entity {
-	constructor(background, entities){
+	constructor(type, background, entities){
 		this.name = '';
+		this.type = type;
 		this.pos = new Point(0,0);
 		this.vel = new Point(0,0);
 		this.accel = new Point(0, 0.2);
@@ -11,11 +12,11 @@ export default class Entity {
 		this.currentsprite;
 		this.width = 0;
 		this.height = 0;
-		this.collision = new Collision();
 		this.env = background;
 		this.context = this.env.context;
 		this.origin = 0;
 		entities.add(this);
+		this.alive = 1;
 	}
 	createSpriteBuffer(image, x, y, width, height){
 		const buffer = document.createElement('canvas');
@@ -54,13 +55,18 @@ export default class Entity {
 		this.context.drawImage(buffer, this.pos.x-this.origin, this.pos.y);
 	}
 
-	update(){
+	updateX(){
 		this.vel.x += this.accel.x;
 		this.pos.x += this.vel.x;
-		this.collision.checkBlockCollison(this, "X");
+		//this.collision.checkBlockCollison(this, "X");
+	}
+	updateY(){
 		this.vel.y += this.accel.y;
 		this.pos.y += this.vel.y;
-		this.collision.checkBlockCollison(this, "Y");
-		this.collision.checkLimitCollision(this);
+		//this.collision.checkBlockCollison(this, "Y");
+	}
+	update(){
+		this.updateX();
+		this.updateY();
 	}
 }

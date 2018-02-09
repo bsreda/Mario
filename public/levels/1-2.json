@@ -358,16 +358,28 @@
             ]
         }
     ],
-
-    "koopa" : [
-        {
-            "pos" : [260, 10]
-        }
+    "border":{
+      "border" : [3110, 240]
+    },
+    "mario" : [
+      {
+        "pos" : [0, 0],
+        "spritename": "idle",
+        "sprite": [276, 44, 16, 16],
+        "control" : ["q", "z", "d", "s"]
+      },
+      {
+        "pos" : [0, 0],
+        "spritename": "idle",
+        "sprite": [276, 106, 16, 16],
+        "control" : ["j", "i", "l", "k"]
+      }
     ],
-
     "goomba" : [
         {
-            "pos" : [220, 10]
+            "pos" : [220, 10],
+            "spritename" : "run-1",
+            "sprite" : [296, 187, 16, 16]
         }
     ]
 

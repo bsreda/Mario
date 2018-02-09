@@ -1,9 +1,10 @@
 export default class Scroll{
-	constructor(entity, background, em){
-		this.entity = entity;
+	constructor(entities, background, em){
+		this.entities = entities;
 		this.background = background;
 		this.origin = 0;
 		this.em = em;
+		this.em.scroll = this;
 	}
 	setOrigin(origin){
 		this.origin = origin;
@@ -11,9 +12,14 @@ export default class Scroll{
 		this.background.origin = this.origin;
 
 	}
+	add(entity){
+		this.entities.push(entity);
+	}
 	adjust(){
-		if (this.entity.pos.x - this.origin > 320){
-			this.setOrigin(this.entity.pos.x - 320);
-		}
+		this.entities.forEach(entity => {
+			if (entity.pos.x - this.origin > 320){
+				this.setOrigin(entity.pos.x - 320);
+			}
+		});
 	}
 }

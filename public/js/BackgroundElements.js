@@ -1,9 +1,6 @@
 import Grid from './Grid.js'
 const TILE_SIZE = 16;
-function loadJSON(url) {
-	return fetch(url)
-	.then(r => r.json());
-}
+import {loadJSON} from './utils.js'
 export default class BackgroundElements{
 	constructor(image, context){
 		this.image = image;
@@ -119,6 +116,10 @@ reset(){
 	this.matrix = new Grid();
 	this.components = [];
 }
+resetSprites(){
+	this.elementsMap = new Map();
+	this.patternMap = new Map();
+}
 loadLevel(name){
 	this.reset();
 	return loadJSON( `/levels/${name}.json`)
@@ -168,6 +169,14 @@ levelInfo.layers.forEach(layer => {
 });//tile
 });//layers
 });//level info
+}
+loadSprites(name){
+ this.resetSprites();
+	return loadJSON( `/sprites/${name}.json`).then(levelInfo=>{
+		levelInfo.tiles.forEach(tile=>{
+			this.addSprite(tile["name"], tile["type"], tile["index"][0], tile["index"][1]);
+		});
+	});
 }
 drawAll(){
 	var component = [];
